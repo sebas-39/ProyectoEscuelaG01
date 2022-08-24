@@ -1,5 +1,14 @@
+from multiprocessing import context
 from django.shortcuts import render
-from django.http import HttpResponse
+from datetime import datetime
+
+from schoolapp.models import Programa
 
 def home(request):
-    return HttpResponse("Hola Mundo Curso Grupo 01")
+    tiempo_ahora = datetime.now()
+    programas = Programa.objects.all()
+    contexto = {
+        'hora': tiempo_ahora,
+        'programas': programas
+    }
+    return render(request,'inicio.html', contexto)
