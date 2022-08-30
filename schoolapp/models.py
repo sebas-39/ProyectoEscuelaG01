@@ -29,7 +29,10 @@ class Seguimiento(models.Model):
     estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE)
     materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
     nota = models.FloatField()
-    
 
+class LogAuditor (models.Model):
+    mensajeError = models.TextField()
+    created_at = models.DateTimeField(auto_now_add= True)
+    update_at = models.DateTimeField(auto_now=True)    
     
 
