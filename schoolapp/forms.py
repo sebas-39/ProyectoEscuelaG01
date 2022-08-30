@@ -7,4 +7,4 @@ from .models import Programa
 class ProgramaForm(forms.ModelForm):
     class Meta:
         model = Programa
-        fields = ('nombre', 'descripcion')
+        fields = '__all__'

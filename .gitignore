@@ -1,3 +1,5 @@
 myvenv/
 db.sqlite3
 *.pyc
+schoolapp/__pycache__/
+schoolapp/__pycache__/models.cpython-310.pyc
