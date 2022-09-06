@@ -1,0 +1,14 @@
+
+{% block titulo %}
+    {{ accion }} Programa
+{% endblock titulo %}
+    
+
+{% block contenido %}
+    <form method="post">
+        {% csrf_token %}
+        {{ programaForm.as_p }}
+
+        <button type="submit">{{ boton }}</button>
+    </form>
+{% endblock contenido %}
