@@ -7,13 +7,7 @@ from schoolapp.models import Estudiante, Programa, LogAuditor
 from schoolapp.forms import ProgramaForm, EstudianteForm
 
 def home(request):
-    tiempo_ahora = datetime.now()
-    programas = Programa.objects.all()
-    contexto = {
-        'hora': tiempo_ahora,
-        'programas': programas
-    }
-    return render(request,'programa/inicio.html', contexto)
+    return render(request,'index.html')
 
 def listar_estudiante(request):
     estudiantes = Estudiante.objects.all()
