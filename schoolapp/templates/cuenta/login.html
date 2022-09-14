@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link href="{% static 'css/login.css' %}" rel="stylesheet">
+    <title>Login</title>
+</head>
+<body class="text-center">
+    <main class="form-signin">
+        <form method="post">
+            {% csrf_token %}
+          <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+      
+          <div class="form-floating">
+            {{form.username}}
+            <label for="floatingInput">{{form.username.label}}</label>
+          </div>
+          <div class="form-floating">
+            {{form.password}}
+            <label for="floatingPassword">{{form.password.label}}</label>
+          </div>
+          <button class="w-100 btn btn-lg btn-primary" type="submit">Acceder</button>
+        </form>
+      </main>      
+</body>
+</html>

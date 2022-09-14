@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block titulo %}Registrar Usuario{% endblock titulo %}
+
+{% block pagina %}Usuario{% endblock pagina %}
+
+{% block contenido %}
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+        {% for field in userform %}
+        <div class="col-md-8">
+            <label class="form-label">{{field.label}}</label>
+            {{field}}
+        </div>
+        {% endfor %}
+        <div class="col-12 mb-3">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="reset" class="btn btn-secondary">Limpiar</button>
+        </div>        
+    </form>
+{% endblock contenido %}
