@@ -18,16 +18,18 @@ def listar_estudiante(request):
 
 def crear_estudiante(request):
     contexto = dict()
+    contexto['accion'] = 'Crear'
     if request.method == 'POST':
         form = EstudianteForm(request.POST)
         if form.is_valid():
             form.save()
-            # Mensaje de almacenamiento correcto
+            contexto['mensaje'] = 'El estudiante fue almacenado correctamente'
         else:
-            #mensaje de almacenamiento incorrecto
-            pass
+            contexto['mensaje'] = 'Los datos enviados desde el formulario no son validos'
+        return render(request, 'estudiante/mensaje.html', contexto)
     else:
         form = EstudianteForm()
+        contexto['boton'] = 'Guardar'
         contexto['form'] = form
         return render(request, 'estudiante/form.html', contexto) 
 
