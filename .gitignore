@@ -1,5 +1,5 @@
 myvenv/
 db.sqlite3
 *.pyc
-schoolapp/__pycache__/
+__pycache__/
 
