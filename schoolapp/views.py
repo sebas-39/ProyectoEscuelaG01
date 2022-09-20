@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 from django.http import HttpResponse
 from datetime import datetime
 from django.contrib.auth.models import User
@@ -29,7 +30,7 @@ def register(request):
             )
             mensaje = f"Usuario {user.username} es almacenado correctamente"
         else:
-            mensaje = "Error al registrar usuario"
+            messages.error(request, 'Verifique los datos ingresado. Intentar de nuevo')
         return render(request, 'mensaje.html', {'mensaje': mensaje}) 
     else:
         user = UserForm()
@@ -48,11 +49,11 @@ def login_user(request):
                 login(request, user)
                 return redirect(reverse('home'))
             else:
-                mensaje = "No tiene permisos para acceder"
-                return render(request, 'mensaje.html', {'mensaje': mensaje})             
+                messages.error(request, 'Las credenciales proporcionadas no son correctas')
+                return redirect(reverse('login'))        
         else:
-            mensaje = "Verificar los datos ingresados"
-            return render(request, 'mensaje.html', {'mensaje': mensaje}) 
+            messages.error(request, 'Verifique los datos ingresado. Intentar de nuevo')
+            return redirect(reverse('login'))
     else:
         form = LoginForm()
         return render(request, 'cuenta/login.html', {'form': form})
@@ -78,10 +79,11 @@ def crear_estudiante(request):
         form = EstudianteForm(request.POST)
         if form.is_valid():
             form.save()
-            contexto['mensaje'] = 'El estudiante fue almacenado correctamente'
+            messages.success(request, 'El estudiante fue almacenado correctamente')
+            return redirect(reverse('listar-estudiantes'))
         else:
-            contexto['mensaje'] = 'Los datos enviados desde el formulario no son validos'
-        return render(request, 'estudiante/mensaje.html', contexto)
+            messages.error(request, 'Los datos enviados desde el formulario no son validos')
+            return redirect(reverse('crear-estudiantes'))
     else:
         form = EstudianteForm()
         contexto['boton'] = 'Guardar'

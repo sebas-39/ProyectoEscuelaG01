@@ -10,31 +10,9 @@ class ProgramaForm(forms.ModelForm):
         fields = '__all__'
         
 class EstudianteForm(forms.ModelForm):
-    username = forms.CharField(label='Usuario', max_length=150, widget=forms.TextInput(
+    user = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(
         attrs={
-            'class': 'form-control',
-           'placeholder': 'Usuario' 
-        }
-    ))
-    password = forms.CharField(label='Contraseña', max_length=30, widget=forms.PasswordInput(
-        attrs={
-            'class': 'form-control',
-        }
-    ))
-    first_name = forms.CharField(label='Nombres', max_length=30, widget=forms.TextInput(
-        attrs={
-            'class': 'form-control',
-        }
-    ))
-    
-    last_name = forms.CharField(label='Apellidos', max_length=60, widget=forms.TextInput(
-        attrs={
-            'class': 'form-control',
-        }
-    ))
-    email = forms.EmailField(label='Email', widget=forms.EmailInput(
-        attrs={
-            'class': 'form-control',
+            'class': 'form-select'
         }
     ))
     cod_estudiante = forms.CharField(label='Cód. Estudiante', max_length=12, widget=forms.TextInput(
@@ -61,7 +39,7 @@ class EstudianteForm(forms.ModelForm):
     
     class Meta:
         model = Estudiante
-        exclude = ['user']
+        fields = '__all__'
         
 class UserForm(forms.ModelForm):
     username = forms.CharField(max_length=150, label='Usuario', widget=forms.TextInput(

@@ -5,6 +5,15 @@
 {% block pagina %}Listar Estudiantes{% endblock pagina %}
 
 {% block contenido %}
+    <a class="btn btn-success mb-3" href="{% url 'crear-estudiantes' %}">Crear estudiante</a>
+    {% if messages %}
+        {% for message in messages %}
+          <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
     <table class="table table-striped">
         <tr class="table-success">
             <th>cod. Estudiante</th>
