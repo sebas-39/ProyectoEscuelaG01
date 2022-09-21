@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from schoolapp.models import Estudiante, Programa, LogAuditor
@@ -65,6 +66,7 @@ def logout_user(request):
 def home(request):
     return render(request,'index.html')
 
+@login_required(login_url='/login/')
 def listar_estudiante(request):
     estudiantes = Estudiante.objects.all()
     contexto = {
@@ -72,6 +74,7 @@ def listar_estudiante(request):
     }
     return render(request, 'estudiante/listar.html', contexto)
 
+@login_required(login_url='/login/')
 def crear_estudiante(request):
     contexto = dict()
     contexto['accion'] = 'Crear'
@@ -90,6 +93,36 @@ def crear_estudiante(request):
         contexto['form'] = form
         return render(request, 'estudiante/form.html', contexto) 
 
+@login_required(login_url='/login/')  
+def actualizar_estudiante(request, id):
+    estudiante = Estudiante.objects.get(id=id)
+    contexto = dict()
+    if request.method == 'POST':
+        form = EstudianteForm(request.POST, instance=estudiante)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'El estudiante fue actualizado correctamente')
+            return redirect(reverse('listar-estudiantes'))
+        else:
+            messages.error(request, 'Los datos enviados desde el formulario no son validos')
+            return redirect(f'/actualizar/estudiante/{id}')
+    else:
+        form = EstudianteForm(instance=estudiante)
+        contexto['form']=form
+        contexto['boton'] = 'Actualizar'
+        return render(request, 'estudiante/form.html', contexto)
+
+@login_required(login_url='/login/')  
+def eliminar_estudiante(request, id):
+    try:
+        estudiante = Estudiante.objects.get(id=id)
+        estudiante.delete()
+        messages.success(request, 'El estudiante fue eliminado correctamente')
+    except ObjectDoesNotExist:
+        messages.error(request, "No se encontró el estudiante solicitado")    
+    return redirect(reverse('listar-estudiantes'))
+
+@login_required(login_url='/login/')
 def crear_programa(request):
     if request.method == 'POST':
         form = ProgramaForm(request.POST)
@@ -113,6 +146,7 @@ def crear_programa(request):
             }
         return render(request, 'programa/form_programa.html', contexto)
 
+@login_required(login_url='/login/')
 def actualizar_program(request, id):
     try:
         programa = Programa.objects.get(id=id)
