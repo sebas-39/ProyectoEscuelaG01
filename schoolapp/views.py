@@ -3,13 +3,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.http import HttpResponse
 from datetime import datetime
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 
-from schoolapp.models import Estudiante, Programa, LogAuditor
-from schoolapp.forms import ProgramaForm, EstudianteForm, UserForm, LoginForm
+from schoolapp.models import Estudiante, Profesor, Programa, LogAuditor
+from schoolapp.forms import *
 
 def register(request):
     contexto = dict()
@@ -67,6 +67,7 @@ def home(request):
     return render(request,'index.html')
 
 @login_required(login_url='/login/')
+@permission_required('schoolapp.view_estudiante', raise_exception=True)
 def listar_estudiante(request):
     estudiantes = Estudiante.objects.all()
     contexto = {
@@ -75,13 +76,30 @@ def listar_estudiante(request):
     return render(request, 'estudiante/listar.html', contexto)
 
 @login_required(login_url='/login/')
+@permission_required('schoolapp.add_estudiante', raise_exception=True)
 def crear_estudiante(request):
     contexto = dict()
     contexto['accion'] = 'Crear'
     if request.method == 'POST':
         form = EstudianteForm(request.POST)
+        rol = Group.objects.get(name='Estudiante') # select * from auth_group where name='Estudiante'
         if form.is_valid():
-            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            usuario = User.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password=password
+            )
+            usuario.groups.add(rol)
+            estudiante = form.save(commit=False)
+            estudiante.user = usuario
+            estudiante.save()
             messages.success(request, 'El estudiante fue almacenado correctamente')
             return redirect(reverse('listar-estudiantes'))
         else:
@@ -93,7 +111,8 @@ def crear_estudiante(request):
         contexto['form'] = form
         return render(request, 'estudiante/form.html', contexto) 
 
-@login_required(login_url='/login/')  
+@login_required(login_url='/login/')
+@permission_required('schoolapp.change_estudiante', raise_exception=True)  
 def actualizar_estudiante(request, id):
     estudiante = Estudiante.objects.get(id=id)
     contexto = dict()
@@ -112,7 +131,8 @@ def actualizar_estudiante(request, id):
         contexto['boton'] = 'Actualizar'
         return render(request, 'estudiante/form.html', contexto)
 
-@login_required(login_url='/login/')  
+@login_required(login_url='/login/')
+@permission_required('schoolapp.delete_estudiante', raise_exception=True)  
 def eliminar_estudiante(request, id):
     try:
         estudiante = Estudiante.objects.get(id=id)
@@ -123,6 +143,47 @@ def eliminar_estudiante(request, id):
     return redirect(reverse('listar-estudiantes'))
 
 @login_required(login_url='/login/')
+@permission_required('schoolapp.view_profesor', raise_exception=True) 
+def listar_profesor(request):
+    profesores = Profesor.objects.all()
+    return render(request, 'profesor/listar.html', {'profesores': profesores})
+
+def crear_profesor(request):
+    contexto = dict()
+    if request.method == 'POST':
+        form = ProfesorForm(request.POST)
+        rol = Group.objects.get(name='Profesor') # select * from auth_group where name='Estudiante'
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            usuario = User.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password=password
+            )
+            usuario.groups.add(rol)
+            profesor = form.save(commit=False)
+            profesor.user = usuario
+            profesor.save()
+            messages.success(request, 'El profesor fue almacenado correctamente')
+            return redirect(reverse('listar-profesor'))
+        else:
+            messages.error(request, 'Los datos enviados desde el formulario no son validos')
+            return redirect(reverse('crear-profesor'))
+    else:
+        form = ProfesorForm()
+        contexto['form'] = form
+        contexto['accion'] = 'Crear'
+        contexto['boton'] = 'Guardar'
+        return render(request, 'profesor/form.html', contexto)
+
+@login_required(login_url='/login/')
+@permission_required('schoolapp.add_programa', raise_exception=True) 
 def crear_programa(request):
     if request.method == 'POST':
         form = ProgramaForm(request.POST)
@@ -147,6 +208,7 @@ def crear_programa(request):
         return render(request, 'programa/form_programa.html', contexto)
 
 @login_required(login_url='/login/')
+@permission_required('schoolapp.change_programa', raise_exception=True) 
 def actualizar_program(request, id):
     try:
         programa = Programa.objects.get(id=id)
@@ -170,3 +232,4 @@ def actualizar_program(request, id):
         contexto['boton'] = 'Editar'
         contexto['accion'] = 'Editar'
         return render(request, 'programa/form_programa.html', contexto)
+    

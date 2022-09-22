@@ -10,7 +10,10 @@ class Estudiante(models.Model):
 
 class Programa(models.Model):
     nombre = models.CharField(max_length=25)
-    descripcion = models.TextField(blank=True) 
+    descripcion = models.TextField(blank=True)
+    
+    def __str__(self):
+        return self.nombre
 
 class Profesor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

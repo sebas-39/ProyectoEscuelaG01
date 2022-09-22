@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block titulo %}
+    Profesor
+{% endblock titulo %}
+
+{% block pagina %}
+    {{ accion }} Profesor
+{% endblock pagina %}
+
+{% block contenido %}
+    <form method="post">
+        {% csrf_token %}
+        {% for campo in form %}
+        <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label">{{campo.label}}:</label>
+            <div class="col-sm-10">
+                {{ campo }}
+            </div>
+        </div>
+        {% endfor %}        
+
+        <div class="mb-4">
+            <button class="btn btn-primary" type="submit">{{ boton }}</button>
+            <button class="btn btn-secondary" type="reset">Cancelar</button>
+        </div>
+        
+    </form>
+{% endblock contenido %}
